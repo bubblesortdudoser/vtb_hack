@@ -1,0 +1,1 @@
+from .Parser import Parser, interfax_all_news_business
