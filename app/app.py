@@ -6,3 +6,4 @@ config.read("config.ini")
 
 parser = InterfaxParser(debug=config['Debug']['debug'])
 parser.interfax_all_news_href_business()
+parser.interfax_get_posts()

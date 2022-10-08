@@ -1,3 +1,6 @@
+import os
+import sys
+import json
 import time
 import logging
 import configparser
@@ -8,6 +11,8 @@ from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support import expected_conditions as EC
 
 from .Parser import Parser
+sys.path.insert(1, os.path.join(sys.path[0], '../'))
+from database.dbworker import init_post
 
 from pyvirtualdisplay import Display #//for cli VPS
 
@@ -38,7 +43,7 @@ class InterfaxParser(Parser):
                     logging.info(f"click: {i}")
                     time.sleep(0.1)
 
-            click_top_up_btn(n=10)
+            click_top_up_btn(n=500)
 
             for post in timeline__text:
                 src = post.find_elements(by=By.TAG_NAME, value="a")
@@ -67,3 +72,31 @@ class InterfaxParser(Parser):
         finally:
             driver.close()
             driver.quit()
+
+    def interfax_get_posts(self):
+        try:
+            logMessage = self.virtual_display()
+            logging.info(logMessage)
+            driver = webdriver.Chrome(service=self.service, options=self.options)
+
+            text = ''
+            for href in self.src_news_list:
+                driver.get(href)
+                time.sleep(0.5)
+                title = driver.find_element(by=By.XPATH, value='//h1[@itemprop="headline"]')
+                p = driver.find_elements(by=By.TAG_NAME, value='p')
+                for data in p:
+                    text += data.text
+                time_block = driver.find_element(by=By.XPATH, value='//aside[@class="textML"]')
+                data_time = time_block.find_element(by=By.TAG_NAME, value='time').get_attribute('datetime')
+                log_message = init_post(title=str(title.text),href=str(href),text=str(text),date_time=str(data_time))
+
+                logging.info(log_message)
+
+        except Exception as e:
+            return e
+
+        finally:
+            driver.close()
+            driver.quit()
+
