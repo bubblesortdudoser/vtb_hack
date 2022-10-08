@@ -1,14 +1,7 @@
-import os
-import sys
-import time
 import logging
 import configparser
 from selenium import webdriver
-from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.common.exceptions import TimeoutException
-from selenium.webdriver.support import expected_conditions as EC
 
 from pyvirtualdisplay import Display #//for cli VPS
 
@@ -24,7 +17,7 @@ class Parser:
     service = Service('/home/donqhomo/Desktop/vtb_hack/app/chromedriver')
     options = webdriver.ChromeOptions()
 
-    news = list()
+    src_news_list = list()
 
     def __init__(self, debug:bool):
         self.debug = debug
@@ -44,21 +37,7 @@ class Parser:
         except Exception as e:
             logging.error(e)
 
-    def interfax_all_news_business(self) -> 'News from interfax':
-        try:
-            logMessage = self.virtual_display()
-            logging.info(logMessage)
-            driver = webdriver.Chrome(service=self.service, options=self.options)
-            driver.get(self.interfax_business_url)
-            time.sleep(1)
-            driver.find_element(by=By, value="sf_url")
 
-        except Exception as e:
-            logging.error(e)
-
-        finally:
-            driver.close()
-            driver.quit()
 
         
 

@@ -1,1 +1,1 @@
-from .Parser import *
+from .InterfaxParser import *
