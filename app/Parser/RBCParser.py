@@ -40,7 +40,7 @@ class RBCParser(Parser):
             logging.info(logMessage)
             driver = webdriver.Chrome(desired_capabilities=self.caps, service=self.service, options=self.options)
 
-            driver.get(self.rbc_economics)
+            driver.get(self.url)
             time.sleep(1)
 
             def click_top_up_btn(n:int):
@@ -90,7 +90,7 @@ class RBCParser(Parser):
                 views = driver.find_element(by=By.XPATH, value='//div[@class="article__header__counter-block"]')
                 watches = views.text.replace(' ', '')
 
-                log_message = init_post(title=str(title.text),href=str(href),text=str(text),date_time=str(data_time.text),source_site=self.source_site,views=int(watches))
+                log_message = init_post(title=str(title.text),href=str(href),text=str(text),date_time=str(data_time.text),source_site=self.source_site,views=int(watches), is_send=False)
                 logging.info(log_message)
 
         except Exception as e:

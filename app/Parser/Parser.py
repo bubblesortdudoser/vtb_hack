@@ -12,15 +12,13 @@ config.read("config.ini")
 logging.basicConfig(encoding='utf-8', format=config['Logging']['Format'], level=logging.INFO)
 
 class Parser:
-    interfax_business_url = 'https://www.interfax.ru/business/'
-    # rbc_economics = ['https://www.rbc.ru/economics/', 'https://www.rbc.ru/business/?utm_source=topline', 'https://www.rbc.ru/finances/?utm_source=topline', 'https://www.rbc.ru/politics/?utm_source=topline']
-    rbc_economics = 'https://www.rbc.ru/politics/?utm_source=topline'
     DRIVER = config['Selenium']['driver']
     service = Service('/home/donqhomo/Desktop/vtb_hack/app/chromedriver')
     options = webdriver.ChromeOptions()
 
-    def __init__(self, debug:bool):
+    def __init__(self, debug:bool, url: str):
         self.debug = debug
+        self.url = url
 
     def virtual_display(self):
         try:

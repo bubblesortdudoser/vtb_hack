@@ -32,7 +32,7 @@ class InterfaxParser(Parser):
             logMessage = self.virtual_display()
             logging.info(logMessage)
             driver = webdriver.Chrome(service=self.service, options=self.options)
-            driver.get(self.interfax_business_url)
+            driver.get(self.url)
             time.sleep(1)
 
             def click_top_up_btn(n:int):
@@ -84,7 +84,7 @@ class InterfaxParser(Parser):
             driver.quit()
 
     def interfax_get_posts(self):
-        try:
+        # try:
             logMessage = self.virtual_display()
             logging.info(logMessage)
             driver = webdriver.Chrome(service=self.service, options=self.options)
@@ -100,14 +100,14 @@ class InterfaxParser(Parser):
                 codecs.encode(text, encoding='utf-8')
                 time_block = driver.find_element(by=By.XPATH, value='//aside[@class="textML"]')
                 data_time = time_block.find_element(by=By.TAG_NAME, value='time').get_attribute('datetime')
-                log_message = init_post(title=str(title.text),href=str(href),text=str(text),date_time=str(data_time),source_site=self.source_site,views=random.randint(10000, 50000))
+                log_message = init_post(title=str(title.text),href=str(href),text=str(text),date_time=str(data_time),source_site=self.source_site,views=random.randint(10000, 50000), is_send=False)
 
                 logging.info(log_message)
 
-        except Exception as e:
-            return e
-
-        finally:
-            driver.close()
-            driver.quit()
+        # except Exception as e:
+        #     return e
+        #
+        # finally:
+        #     driver.close()
+        #     driver.quit()
 
