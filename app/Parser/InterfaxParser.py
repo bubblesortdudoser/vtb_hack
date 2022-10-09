@@ -6,7 +6,9 @@ import logging
 import configparser
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+import codecs
 from selenium.webdriver.support.ui import WebDriverWait
+import random
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support import expected_conditions as EC
 
@@ -23,17 +25,15 @@ config.read("config.ini")
 logging.basicConfig(encoding='utf-8', format=config['Logging']['Format'], level=logging.INFO)
 
 class InterfaxParser(Parser):
-    def interfax_all_news_href_business(self) -> 'list of news href from interfax':
+    src_news_list = list()
+    source_site = 'Interfax'
+    def interfax_all_news_href_business(self, n: int) -> 'list of news href from interfax':
         try:
             logMessage = self.virtual_display()
             logging.info(logMessage)
             driver = webdriver.Chrome(service=self.service, options=self.options)
             driver.get(self.interfax_business_url)
             time.sleep(1)
-
-            timeline__text = driver.find_elements(by=By.XPATH, value='//div[@class="timeline__text"]')
-            timeline__group = driver.find_elements(by=By.XPATH, value='//div[@class="timeline__group"]')
-            timeline__photo = driver.find_elements(by=By.XPATH, value='//div[@class="timeline__photo"]')
 
             def click_top_up_btn(n:int):
                 for i in range(n):
@@ -43,21 +43,31 @@ class InterfaxParser(Parser):
                     logging.info(f"click: {i}")
                     time.sleep(0.1)
 
-            click_top_up_btn(n=500)
+            click_top_up_btn(n=n)
+
+            timeline__text = driver.find_elements(by=By.XPATH, value='//div[@class="timeline__text"]')
+            timeline__group = driver.find_elements(by=By.XPATH, value='//div[@class="timeline__group"]')
+            timeline__photo = driver.find_elements(by=By.XPATH, value='//div[@class="timeline__photo"]')
 
             for post in timeline__text:
                 src = post.find_elements(by=By.TAG_NAME, value="a")
+                i = 0
                 for href in src:
+                    logging.info(f'{i}:{href} added')
                     self.src_news_list.append(href.get_attribute('href'))
 
             for post in timeline__group:
                 src = post.find_elements(by=By.TAG_NAME, value="a")
+                i = 0
                 for href in src:
+                    logging.info(f'{i}:{href} added')
                     self.src_news_list.append(href.get_attribute('href'))
 
             for post in timeline__photo:
                 src = post.find_elements(by=By.TAG_NAME, value="a")
+                i = 0
                 for href in src:
+                    logging.info(f'{i}:{href} added')
                     self.src_news_list.append(href.get_attribute('href'))
 
             logging.info(f"href list: {self.src_news_list}")
@@ -79,17 +89,18 @@ class InterfaxParser(Parser):
             logging.info(logMessage)
             driver = webdriver.Chrome(service=self.service, options=self.options)
 
-            text = ''
             for href in self.src_news_list:
                 driver.get(href)
                 time.sleep(0.5)
                 title = driver.find_element(by=By.XPATH, value='//h1[@itemprop="headline"]')
                 p = driver.find_elements(by=By.TAG_NAME, value='p')
+                text = ''
                 for data in p:
                     text += data.text
+                codecs.encode(text, encoding='utf-8')
                 time_block = driver.find_element(by=By.XPATH, value='//aside[@class="textML"]')
                 data_time = time_block.find_element(by=By.TAG_NAME, value='time').get_attribute('datetime')
-                log_message = init_post(title=str(title.text),href=str(href),text=str(text),date_time=str(data_time))
+                log_message = init_post(title=str(title.text),href=str(href),text=str(text),date_time=str(data_time),source_site=self.source_site,views=random.randint(10000, 50000))
 
                 logging.info(log_message)
 
