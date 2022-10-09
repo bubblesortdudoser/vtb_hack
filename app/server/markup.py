@@ -21,10 +21,10 @@ itembtn5 = types.KeyboardButton('военная отрасль')
 itembtn6 = types.KeyboardButton('финансовый сектор')
 scope_of_activity.add(itembtn1,itembtn2,itembtn3,itembtn4,itembtn5,itembtn6)
 
-menu_msg = 'Здесь только отборные новости!'
+menu_msg = 'Здесь самые отборные новости!'
 menu_mp = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=1)
-itembtn1 = types.KeyboardButton('/Дайджест')
-itembtn2 = types.KeyboardButton('/Новости')
+itembtn1 = types.KeyboardButton('/news')
+itembtn2 = types.KeyboardButton('/profile')
 menu_mp.add(itembtn1,itembtn2)
 
 

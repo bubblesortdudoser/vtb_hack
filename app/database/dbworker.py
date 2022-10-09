@@ -50,7 +50,7 @@ def get_post(href:str):
                 post = Post.query.filter_by(href=href).first()
                 return post
             else:
-                pass
+                False
 
     except Exception as e:
         return jsonify(message=e, status="DB error")

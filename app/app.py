@@ -28,28 +28,25 @@ class App():
             change_status(href = post.href, status=True)
 
     def polling(self):
-        while True:
-            rbc_urls = ['https://www.rbc.ru/economics/', 'https://www.rbc.ru/business/?utm_source=topline',
-                        'https://www.rbc.ru/finances/?utm_source=topline',
-                        'https://www.rbc.ru/politics/?utm_source=topline']
-            for i in range(len(rbc_urls)):
-                rbc = RBCParser(url=rbc_urls[i], debug=config['Debug']['debug'])
-                rbc.rbc_all_news_href_business(n=2)
-                rbc.rbc_get_posts()
+        try:
+            while True:
+                rbc_urls = ['https://www.rbc.ru/economics/', 'https://www.rbc.ru/business/?utm_source=topline',
+                            'https://www.rbc.ru/finances/?utm_source=topline',
+                            'https://www.rbc.ru/politics/?utm_source=topline']
+                for i in range(len(rbc_urls)):
+                    rbc = RBCParser(url=rbc_urls[i], debug=True)
+                    rbc.rbc_all_news_href_business(n=2)
+                    rbc.rbc_get_posts()
 
-            interfax = InterfaxParser(debug=config['Debug']['debug'], url='https://www.interfax.ru/business/')
-            interfax.interfax_all_news_href_business(n=2)
-            interfax.interfax_get_posts()
-            unsend = unsend_posts()
-            for post in unsend:
-                r = requests.post('127.0.0.1:5000/post_handler', json={"title": post.title, "href": post.href,"text":post.text,"date_time":post.date_time,"source_site":post.source_site,"views":post.views}) #NLP
-                change_status(href=post.href, status=True)
-            time.sleep(5)
-
+                interfax = InterfaxParser(debug=True, url='https://www.interfax.ru/business/')
+                interfax.interfax_all_news_href_business(n=2)
+                interfax.interfax_get_posts()
+        except Exception as e:
+            pass
 
 
 app = App()
-app.first_start()
+# app.first_start()
 app.polling()
 
 
