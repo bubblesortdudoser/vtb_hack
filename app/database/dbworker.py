@@ -83,3 +83,26 @@ def to_csv():
         return jsonify(message=e, status="DB error")
 
 
+class User(db.Model):
+    __tablename__ = 'user'
+
+    id = db.Column(db.Integer(), primary_key=True)
+    chat_id = db.Column(db.Integer())
+    role = db.Column(db.String(64))
+    scope_of_activity = db.Column(db.String(64))
+
+def init_user(chat_id:int, role:str, scope_of_activity:str):
+    try:
+        if User.query.filter_by(chat_id=chat_id).first():
+            return {"message": 'User already added'}
+        else:
+            user = User(chat_id=chat_id,role=role,scope_of_activity=scope_of_activity)
+            db.session.add(user)
+            db.session.commit()
+
+        return {"message": f'Added user {user.id}'}
+
+    except Exception as e:
+        return jsonify(message=e, status="DB error")
+
+

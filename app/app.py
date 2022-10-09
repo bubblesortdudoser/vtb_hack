@@ -23,7 +23,7 @@ class App():
         interfax.interfax_get_posts()
 
         to_csv()
-        r = requests.get('google.com') # запрос к NLP на скачку
+        r = requests.get('127.0.0.1:5000/upload_csv') # запрос к NLP на скачку
         posts = get_all_posts()
         for post in posts:
             change_status(href = post.href, status=True)
@@ -43,14 +43,14 @@ class App():
             interfax.interfax_get_posts()
             unsend = unsend_posts()
             for post in unsend:
-                r = requests.post('google.com', json={"title": post.title, "href": post.href,"text":post.text,"date_time":post.date_time,"source_site":post.source_site,"views":post.views}) #NLP
+                r = requests.post('127.0.0.1:5000/post_handler', json={"title": post.title, "href": post.href,"text":post.text,"date_time":post.date_time,"source_site":post.source_site,"views":post.views}) #NLP
                 change_status(href=post.href, status=True)
             time.sleep(5)
 
 
 
 app = App()
-# app.first_start()
+app.first_start()
 app.polling()
 
 
