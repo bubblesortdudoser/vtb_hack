@@ -42,6 +42,19 @@ def init_post(title:str, href:str, text:str, date_time:str,source_site:str,views
 def unsend_posts():
     return Post.query.filter(Post.is_send == False).all()
 
+def get_post(href:str):
+    try:
+        with app.app_context():
+
+            if Post.query.filter_by(href=href).first():
+                post = Post.query.filter_by(href=href).first()
+                return post
+            else:
+                pass
+
+    except Exception as e:
+        return jsonify(message=e, status="DB error")
+
 def get_all_posts():
     return Post.query.filter(Post.id != None).all()
 
@@ -104,5 +117,7 @@ def init_user(chat_id:int, role:str, scope_of_activity:str):
 
     except Exception as e:
         return jsonify(message=e, status="DB error")
+
+
 
 

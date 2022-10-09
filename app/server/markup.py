@@ -26,3 +26,12 @@ menu_mp = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=1)
 itembtn1 = types.KeyboardButton('/Дайджест')
 itembtn2 = types.KeyboardButton('/Новости')
 menu_mp.add(itembtn1,itembtn2)
+
+
+like_dislike = types.InlineKeyboardMarkup(row_width=1)
+
+like = types.InlineKeyboardButton(text='👍', callback_data='like')
+dislike = types.InlineKeyboardButton(text='👎', callback_data='dislike')
+
+like_dislike.add(like, dislike)
+
