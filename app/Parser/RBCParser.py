@@ -16,7 +16,6 @@ from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
 from .Parser import Parser
 sys.path.insert(1, os.path.join(sys.path[0], '../'))
-from database.dbworker import init_post
 
 today = date.today()
 

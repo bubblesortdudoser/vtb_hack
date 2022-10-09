@@ -1,6 +1,6 @@
 import configparser
 from Parser import *
-from database.dbworker import to_csv
+
 import requests
 from database.dbworker import get_all_posts, change_status, to_csv, unsend_posts
 
@@ -15,15 +15,14 @@ class App():
                          'https://www.rbc.ru/politics/?utm_source=topline']
         for i in range(len(rbc_urls)):
             rbc = RBCParser(url = rbc_urls[i], debug=True)
-            rbc.rbc_all_news_href_business(n=2)
+            rbc.rbc_all_news_href_business(n=100)
             rbc.rbc_get_posts()
 
         interfax = InterfaxParser(debug=True, url ='https://www.interfax.ru/business/')
-        interfax.interfax_all_news_href_business(n=2)
+        interfax.interfax_all_news_href_business(n=30)
         interfax.interfax_get_posts()
 
         to_csv()
-        r = requests.get('127.0.0.1:5000/upload_csv') # запрос к NLP на скачку
         posts = get_all_posts()
         for post in posts:
             change_status(href = post.href, status=True)
