@@ -5,10 +5,11 @@ import markup as mp
 from dotenv import load_dotenv
 from telegram_bot_pagination import InlineKeyboardPaginator
 
+import time
 import sys
 
 sys.path.insert(1, os.path.join(sys.path[0], '../'))
-from database.dbworker import get_post
+from database import get_post
 
 
 from Levenshtein import distance as lev_distance
@@ -176,66 +177,40 @@ def scope_of_activity(message):
 @bot.message_handler(commands=['news'])
 def news(message) -> None:
     try:
-        unique_code = extract_unique_code(message.text)
-        output = getReccomendation(int(unique_code),data,X,y,Map)
+        output = getReccomendation(2, data, X, y, Map)
+        print(output)
         msg = ''
         for i in range(len(output)):
             post = get_post(href=output[i])
-            msg += f'[{post.title}]({output[i]}\n'
-
-        bot.send_message(message.chat.id, msg, reply_markup=mp.like_dislike, parse_mode='MARKDOWN')
+            print(post)
+            if post == False:
+                pass
+            else:
+                msg=f"{output[i]}"
+                print(post)
+                bot.send_message(message.chat.id, msg, reply_markup=mp.menu_mp, parse_mode='MARKDOWN')
 
     except Exception as e:
-        bot.reply_to(message, f'{e}')
+        pass
+
+@bot.message_handler(commands=['profile'])
+def profile(message) -> None:
+    # try:
+        print(Map)
+        role =  users[message.chat.id]
+        scope_of_activity = users[message.chat.id]["scope_of_activity"]
+        bot.send_message(chat_id=message.chat.id,message=f"Сфера деятельности: {scope_of_activity}\nДолжность: {role}",reply_markup=mp.menu_mp, parse_mode='MARKDOWN')
+
+    # except Exception as e:
+    #     print(e)
 
 def extract_unique_code(text):
     return text.split()[1] if len(text.split()) > 1 else None
 
 
-# @server.callback_query_handler(func=lambda call: call.data.split('#')[0] == 'character')
-# def page_callback(call):
-#     page = int(call.data.split('#')[1])
-#     server.delete_message(
-#         call.message.chat.id,
-#         call.message.message_id
-#     )
-#     send_posts_page(call.message, page)
-#
-#
-# def send_posts_page(message, page=1):
-#     data_pages = data_page()
-#     paginator = InlineKeyboardPaginator(
-#         len(data_pages),
-#         current_page=page,
-#         data_pattern='character#{page}'
-#     )
-#
-#     server.send_message(
-#         message.chat.id,
-#         data_pages[page - 1],
-#         reply_markup=paginator.markup,
-#         parse_mode='Markdown'
-#     )
-#
-#
-# def data_page():
-#     output =
-#
-#     data_pages = []
-#     i = 0
-#     sample = ' '
-#     for j in range(len(output)):
-#         i += 1
-#         sample = sample + f' ``` {output[j]} ``` \n'
-#         if i % 20 == 0:
-#             data_pages.append(sample)
-#             sample = ' '
-#
-#     return data_pages
-
-
-print(1)
-bot.polling(none_stop=True)
+if __name__=='__main__':
+    print("bot.polling()...")
+    bot.polling(none_stop=True)
 
 
 
