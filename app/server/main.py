@@ -177,7 +177,10 @@ def scope_of_activity(message):
 def news(message) -> None:
     try:
         unique_code = extract_unique_code(message.text)
-        output = getReccomendation(int(unique_code),data,X,y,Map)
+        if unique_code == None:
+            output = getReccomendation(5, data, X, y, Map)
+        else:
+            output = getReccomendation(int(unique_code),data,X,y,Map)
         msg = ''
         for i in range(len(output)):
             post = get_post(href=output[i])
