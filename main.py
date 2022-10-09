@@ -61,8 +61,7 @@ rubbish_list = ['которые', 'нам', 'дали', 'например', 'п�
                 'российские', 'количество', 'впервые']
 stop_list += rubbish_list
 
-for i in tqdm(range(data.shape[0])):
-    string = data.loc[i, 'text']
+def clear(string: str):
     for sign in punkt_list:
         string = string.replace(sign, '') # чистка знаков препинания
     string = string.replace('\n', ' ') # чистка переносов строки
@@ -70,34 +69,34 @@ for i in tqdm(range(data.shape[0])):
     string = string.replace('  ', ' ') # удаление двойных пробелов
     string = word_tokenize(string) # токенизация по словам
     string = [word for word in string if not word in stop_list] # удаление стоп-слов
-    data.loc[i, 'text'] = ''
-    for j in string:
-        data.loc[i, 'text'] += ' '+j
-    data.loc[i, 'text'] = data.loc[i, 'text'][1:]
+    return string
 
-for i in data['text']:
-    text += ' '+i
-for sign in punkt_list:
-    text = text.replace(sign, '')
-text = text.replace('\n', ' ')
-text = text.replace('\t', ' ')
-text = text.replace('  ', ' ')
-text = word_tokenize(text)
-text = [word for word in text if not word in stop_list]
+def clear_data(data):
+    for i in tqdm(range(data.shape[0])):
+        string = data.loc[i, 'text']
+        string = clear(string)
+        data.loc[i, 'text'] = ''
+        for j in string:
+            data.loc[i, 'text'] += ' '+j
+        data.loc[i, 'text'] = data.loc[i, 'text'][1:]
+    return data
 
-text_list = []
-for i in tqdm(range(len(data))):
-    text_list.append(data.loc[i, 'text'])
+def delenie(data):
+    text_list = []
+    for i in tqdm(range(len(data))):
+        text_list.append(data.loc[i, 'text'])
+    return text_list
 
 def Vectorization(corpus):
     X = TfidfVectorizer().fit_transform(corpus).toarray()
     return X
 
-X = Vectorization(text_list)
-
-kmeans = KMeans(n_clusters = 10, init = "k-means++", max_iter = 50, n_init = 100, random_state = 1)
-kmeans.fit(X)
-y = kmeans.predict(X)
+def train():
+    X = Vectorization(delenie(clear_data(data)))
+    kmeans = KMeans(n_clusters = 10, init = "k-means++", max_iter = 50, n_init = 100, random_state = 1)
+    kmeans.fit(X)
+    return X, kmeans.predict(X), kmeans
+X, y, kmeans = train()
 
 def Mapping(kmeans):
     label = kmeans.labels_
@@ -111,11 +110,7 @@ def Mapping(kmeans):
 
 Map = Mapping(kmeans)
 
-global X
-global y
-global Map
-
-def getReccomendation(index, data):
+def getReccomendation(index, data, X, y, Map):
     prediction = y[index]
     vector_arr = []
     id_arr = []
